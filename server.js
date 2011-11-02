@@ -35,6 +35,6 @@ app.listen(8888);
 io.sockets.on('connection', function (socket) {
   socket.emit('news', { hello: 'world' });
   socket.on('update', function (data) {
-    console.log(data);
+    socket.emit('update', { x: data.x, y: data.y });
   });
 });

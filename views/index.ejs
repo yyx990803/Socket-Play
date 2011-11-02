@@ -6,12 +6,16 @@
 </ul>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-  var socket = io.connect();
-  socket.on('news', function (data) {
+var socket = io.connect();
+socket.on('news', function (data) {
     console.log(data);
     socket.emit('update', { my: 'fsdfsf' });
 	log();
 });
+
+socket.on('update', function(data) {
+	console.log(data);
+}
 
 function log() {
 	socket.emit('update', { x: 123, y: 213});
