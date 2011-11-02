@@ -15,7 +15,7 @@ socket.on('news', function (data) {
 
 socket.on('update', function(data) {
 	console.log(data);
-}
+});
 
 function log() {
 	socket.emit('update', { x: 123, y: 213});
