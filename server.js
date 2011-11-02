@@ -1,10 +1,5 @@
-
-/**
- * Module dependencies.
- */
-
-var http = require('http'),
-	express = require('express'),
+var http = require('http');
+var express = require('express'),
 	controllers = require('./controllers');
 
 var app = module.exports = express.createServer();
