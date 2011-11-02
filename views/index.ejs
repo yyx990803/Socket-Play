@@ -9,6 +9,12 @@
   var socket = io.connect();
   socket.on('news', function (data) {
     console.log(data);
-    socket.emit('my other event', { my: 'data' });
-  });
+    socket.emit('update', { my: 'fsdfsf' });
+	log();
+});
+
+function log() {
+	socket.emit('update', { x: 123, y: 213});
+	setTimeout(log, 30);
+}
 </script>
