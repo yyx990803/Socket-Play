@@ -1,5 +1,6 @@
 var express = require('express'),
-	controllers = require('./controllers');
+	controllers = require('./controllers'),
+	io = require('socket.io');
 
 var app = module.exports = express.createServer();
 
@@ -28,4 +29,12 @@ app.configure('production', function(){
 app.get('/', controllers.index);
 app.get('/c', controllers.controller);
 
+io = io.listen(app);
 app.listen(8888);
+
+io.sockets.on('connection', function (socket) {
+  socket.emit('news', { hello: 'world' });
+  socket.on('my other event', function (data) {
+    console.log(data);
+  });
+});
