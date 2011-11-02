@@ -2,12 +2,9 @@ var models = require('../models'),
 	Score = models.Score;
 
 exports.index = function(req, res){
-	Score.find({}, function(err, docs){
-		res.render('index', {
-			title: '',
-			slug: 'home',
-			scores: docs
-		});
+	res.render('index', {
+		title: '',
+		slug: 'home'
 	});
 };
 

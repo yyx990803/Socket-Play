@@ -1,24 +1,6 @@
 <h1>TESTingg</h1>
-<ul>
-	<% for (var i=0; i<scores.length; i++) { %>
-		<li><%= scores[i].name + ' ' + scores[i].score %></li>
-	<% } %>
-</ul>
-<script src="/socket.io/socket.io.js"></script>
-<script>
-var socket = io.connect();
-socket.on('news', function (data) {
-    console.log(data);
-    socket.emit('update', { my: 'fsdfsf' });
-	log();
-});
-
-socket.on('update', function(data) {
-	console.log(data);
-});
-
-function log() {
-	socket.emit('update', { x: 123, y: 213});
-	setTimeout(log, 30);
-}
-</script>
+<div id="content"></div>
+<h4 id="gameid"></h4>
+<div id="status">Controller not connected</div>
+<div id="info"></div>
+<script data-main="js/main" src="js/require.js"></script>
