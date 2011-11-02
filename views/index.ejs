@@ -4,7 +4,7 @@
 		<li><%= scores[i].name + ' ' + scores[i].score %></li>
 	<% } %>
 </ul>
-<script src="/socket.io/socket.io.js"></script>
+<script src="/js/socket.io.js"></script>
 <script>
   var socket = io.connect();
   socket.on('news', function (data) {
