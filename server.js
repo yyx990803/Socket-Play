@@ -1,4 +1,3 @@
-var http = require('http');
 var express = require('express'),
 	controllers = require('./controllers');
 
@@ -30,4 +29,4 @@ app.get('/', controllers.index);
 app.get('/c', controllers.controller);
 
 app.listen(8888);
-//console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
