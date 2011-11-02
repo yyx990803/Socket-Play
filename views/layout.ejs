@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket Play<% if (title != '') { %> | <%= title %><% } %></title>
+    <link rel='stylesheet' href='/css/style.css' />
+	<% if (slug == 'controller') { %>
+		<script src="/js/controller.js"></script>
+	<% } %>
+  </head>
+  <body>
+    <%- body %>
+  </body>
+</html>
