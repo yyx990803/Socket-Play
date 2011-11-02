@@ -33,6 +33,7 @@ io = io.listen(app);
 app.listen(8888);
 
 var games = {}; //holder for game connections
+var map = {}; //mapping for game and controllers
 
 io.sockets.on('connection', function (socket) {
 	
@@ -40,7 +41,7 @@ io.sockets.on('connection', function (socket) {
 	
 	socket.on('new game', function(stamp) {
 		socket.set('stamp', stamp, function(){
-			games['n'+stamp] = socket.id;
+			games[stamp] = socket.id;
 			console.log('new game connection: '+stamp);
 		});
 		socket.set('type', 'game');
@@ -48,11 +49,12 @@ io.sockets.on('connection', function (socket) {
 	
 	socket.on('new controller', function(stamp){
 		socket.set('type', 'controller');
-		var id = games['n'+stamp];
+		var id = games[stamp];
 		if (id) {
 			console.log('new controller connection: '+stamp);
 			socket.emit('connected to game');
-			console.log(games['n'+stamp]);
+			socket.set('type', 'controller')
+			map[socket.id] = id;
 			io.sockets.socket(id).emit('controller connected');
 		} else {
 			socket.emit('no game');
@@ -60,18 +62,21 @@ io.sockets.on('connection', function (socket) {
 	});
 	
 	socket.on('update', function(data) {
-		var id = games['n'+data.stamp];
-		io.sockets.socket(id).emit('update', data.orientation);
+		var id = map[socket.id];
+		io.sockets.socket(id).emit('update', data);
 	});
 	
 	socket.on('disconnect', function(){
-		socket.get('stamp', function(err, stamp){
-			socket.get('type', function (err, type){
-				if (type == 'game') {
-					games['n'+stamp] = null;
-					console.log('game connection '+stamp+' closed.');
-				}
-			});
+		socket.get('type', function (err, type){
+			if (type == 'game') {
+				socket.get('stamp', function(err, stamp){
+					games[stamp] = null;
+					console.log('game connection '+socket.id+' closed.');
+				});
+			} else if (type == 'controller') {
+				map[socket.id] = null;
+				console.log('controller connection '+socket.id+' closed.')
+			}
 		});
 	});
 });

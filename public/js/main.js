@@ -70,11 +70,6 @@ require(
 			}, 200).start();	
 		}
 		
-		function process(data) {
-			update(d[0], d[1], d[2]);
-			$('#info').html('alpha: '+d[0]+'(not used)<br/>beta: '+ d[1]+'<br/>gamma: '+ d[2]);
-		}
-		
 		/*
 		document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 		function onDocumentMouseDown(e) {

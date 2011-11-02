@@ -21,22 +21,18 @@ socket.on('connected', function(){
 	
 	function startUpdates() {
 		
-		var or = {
+		var orientation = {
 			x: 0,
 			y: 0,
 			z: 0
 		};
 		
 		window.addEventListener('deviceorientation', function(data){
-			or.x = data.beta;
-			or.y = data.alpha;
-			or.z = -data.gamma;
-			update();
+			orientation.x = data.beta;
+			orientation.y = data.alpha;
+			orientation.z = -data.gamma;
+			socket.emit('update', orientation);
 		}, false);
-		
-		function update() {
-			socket.emit('update', {stamp:stamp, orientation:or});
-		}
 		
 	}
 });
