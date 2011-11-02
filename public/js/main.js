@@ -56,8 +56,8 @@ require(
 			socket.on('controller connected', function(){
 				$('#status').html('Controller Connected');
 			});
-		    socket.on('controller update', function(data){
-				process(data);
+		    socket.on('update', function(data){
+				update(data.x, data.y, data.z);
 		    });
 		};
 		
@@ -71,8 +71,8 @@ require(
 		}
 		
 		function process(data) {
-			update(data.x, data.y, data.z);
-			$('#info').html('alpha: '+ Math.round(data.x)+'(not used)<br/>beta: '+ Math.round(data.y)+'<br/>gamma: '+ Math.round(data.z));
+			update(d[0], d[1], d[2]);
+			$('#info').html('alpha: '+d[0]+'(not used)<br/>beta: '+ d[1]+'<br/>gamma: '+ d[2]);
 		}
 		
 		/*
