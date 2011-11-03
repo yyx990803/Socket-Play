@@ -11,7 +11,6 @@ socket.on('new connection', function(){
 
 socket.on('game closed', function(){
 	$('#status').html('Game Closed.');
-	window.removeEventListener('deviceorientation', sendUpdate, false);
 });
 
 function askForID() {
@@ -27,12 +26,11 @@ function askForID() {
 
 function start() {
 	$('#status').html('Connected');
-	window.addEventListener('deviceorientation', sendUpdate, false);
-}
-
-function sendUpdate(data){
-	orientation.x = data.beta;
-	orientation.y = data.alpha ? data.alpha : 0;
-	orientation.z = -data.gamma;
-	socket.emit('update', orientation);
+	window.addEventListener('deviceorientation', function(data){
+		orientation.x = data.beta;
+		orientation.y = data.alpha || 0;
+		orientation.z = -data.gamma;
+		socket.emit('update', orientation);
+		$('#info').html(orientation.x+'<br/>'+orientation.y+'<br/>'+orientation.z);
+	}, false);
 }
