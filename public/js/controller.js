@@ -1,9 +1,4 @@
 var socket = io.connect();
-var orientation = {
-	x: 0,
-	y: 0,
-	z: 0
-};
 
 socket.on('new connection', function(){
 	askForID();
@@ -27,10 +22,11 @@ function askForID() {
 function start() {
 	$('#status').html('Connected');
 	window.addEventListener('deviceorientation', function(data){
-		orientation.x = data.beta;
-		orientation.y = data.alpha || 0;
-		orientation.z = -data.gamma;
-		socket.emit('update', orientation);
-		$('#info').html(orientation.x+'<br/>'+orientation.y+'<br/>'+orientation.z);
+		socket.emit('update', {
+			x: data.beta,
+			y: data.alpha,
+			z: -data.gamma
+		});
+		$('#info').html(data.beta+'<br/>'+data.alpha+'<br/>'+data.gamma);
 	}, false);
 }
