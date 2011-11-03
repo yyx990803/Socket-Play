@@ -34,5 +34,6 @@ function sendUpdate(data){
 	orientation.x = data.beta.toFixed(3);
 	orientation.y = data.alpha ? data.alpha.toFixed(3) : 0;
 	orientation.z = -data.gamma.toFixed(3);
+	$('#info').html(orientation.x+'<br/>'+orientation.y+'<br/>'+orientation.z);
 	socket.emit('update', orientation);
 }
