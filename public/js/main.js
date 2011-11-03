@@ -3,8 +3,7 @@ require(
         "utils/stats",
 		"utils/anim",
 		"libs/three",
-		"libs/tween",
-		"libs/jquery"
+		"libs/tween"
     ],
     function(setupStats, setupAnimation, THREE, TWEEN) {
 	
@@ -45,21 +44,37 @@ require(
 		}) ();
 		
 		window.onload = function() {
+			
 		    var socket = io.connect();
-			var stamp = new Date().getTime();
-			stamp %= 100000000;
-		    socket.on('connected', function() {
-				var i = document.getElementById('gameid');
-				i.innerHTML = stamp;
-		    	socket.emit('new game', stamp);
+			
+		    socket.on('new connection', function() {
+		    	socket.emit('new game', function(id){
+					$('#gameid').html(id);
+				});
 		    });
+		
 			socket.on('controller connected', function(){
 				$('#status').html('Controller Connected');
 			});
+			
+			socket.on('controller closed', function(){
+				$('#status').html('Controller Disconnected');
+			});
+			
 		    socket.on('update', function(data){
+				count++;
 				update(data.x, data.y, data.z);
 		    });
 		};
+		
+		var count = 0;
+		var i = document.getElementById('ups');
+		watch();
+		function watch() {
+			i.innerHTML = count;
+			count = 0;
+			setTimeout(watch, 1000);
+		}
 		
 		function update(x,y,z) {
 			y = 0;
@@ -69,24 +84,6 @@ require(
 				z : z / RATIO
 			}, 200).start();	
 		}
-		
-		/*
-		document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-		function onDocumentMouseDown(e) {
-			e.preventDefault();
-			
-			new TWEEN.Tween( cube.position ).to({
-				x: Math.random() * 200 - 100,
-				y: Math.random() * 200 - 100,
-				z: Math.random() * 200 - 100 }, 2000 )
-			.easing(TWEEN.Easing.Elastic.EaseOut).start();
-			
-			new TWEEN.Tween( cube.rotation ).to( {
-				x: ( Math.random() * 360 ) * Math.PI / 180,
-				y: ( Math.random() * 360 ) * Math.PI / 180,
-				z: ( Math.random() * 360 ) * Math.PI / 180 }, 2000 )
-			.easing(TWEEN.Easing.Elastic.EaseOut).start();
-		}
-		*/
+
     }
 );

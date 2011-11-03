@@ -1,38 +1,38 @@
 var socket = io.connect();
+var orientation = {
+	x: 0,
+	y: 0,
+	z: 0
+};
 
-socket.on('connected', function(){
-	
-	init();
-	var stamp;
-	
-	socket.on('no game', function(){
-		init();
-	});
-	
-	socket.on('connected to game', function(){
-		$('#status').html('Connected');
-		startUpdates();
-	});
-	
-	function init() {
-		stamp = prompt("Enter the game id:");
-		socket.emit('new controller', stamp);
-	}
-	
-	function startUpdates() {
-		
-		var orientation = {
-			x: 0,
-			y: 0,
-			z: 0
-		};
-		
-		window.addEventListener('deviceorientation', function(data){
-			orientation.x = data.beta;
-			orientation.y = data.alpha;
-			orientation.z = -data.gamma;
-			socket.emit('update', orientation);
-		}, false);
-		
-	}
+socket.on('new connection', function(){
+	askForID();
 });
+
+socket.on('game closed', function(){
+	$('#status').html('Game Closed.');
+	window.removeEventListener('deviceorientation', sendUpdate, false);
+});
+
+function askForID() {
+	var stamp = prompt("Enter the game id:");
+	socket.emit('new controller', stamp, function(success){
+		if (success) {
+			start();
+		} else {
+			askForID();
+		}
+	});
+}
+
+function start() {
+	$('#status').html('Connected');
+	window.addEventListener('deviceorientation', sendUpdate, false);
+}
+
+function sendUpdate(data){
+	orientation.x = data.beta;
+	orientation.y = data.alpha;
+	orientation.z = -data.gamma;
+	socket.emit('update', orientation);
+}

@@ -32,51 +32,93 @@ app.get('/c', controllers.controller);
 io = io.listen(app);
 app.listen(8888);
 
-var games = {}; //holder for game connections
-var map = {}; //mapping for game and controllers
+//Socket Server Logic
+var match = {}; //temp holder for establishing connections between games and controllers
 
 io.sockets.on('connection', function (socket) {
 	
-	socket.emit('connected');
+	socket.emit('new connection');
 	
-	socket.on('new game', function(stamp) {
-		socket.set('stamp', stamp, function(){
-			games[stamp] = socket.id;
-			console.log('new game connection: '+stamp);
-		});
+	/* 
+	 * New game connection
+	 */
+	socket.on('new game', function(returnID) {
+		
+		console.log('new game connection on: '+ socket.id);
+		var stamp = getNewStamp();
+		returnID(stamp);
+		match[stamp] = socket.id;
 		socket.set('type', 'game');
+		socket.set('stamp', stamp);
+		
 	});
 	
-	socket.on('new controller', function(stamp){
-		socket.set('type', 'controller');
-		var id = games[stamp];
-		if (id) {
-			console.log('new controller connection: '+stamp);
-			socket.emit('connected to game');
-			socket.set('type', 'controller')
-			map[socket.id] = id;
-			io.sockets.socket(id).emit('controller connected');
+	/* 
+	 * New controller connection
+	 */
+	socket.on('new controller', function(stamp, returnConnection){
+		
+		console.log('new controller connection on: '+ socket.id);
+		var gameid = match[stamp];
+		if (gameid) {
+			
+			socket.set('game', gameid);
+			socket.set('type', 'controller');
+			
+			var game = io.sockets.socket(gameid);
+			game.set('controller', socket.id);
+			game.emit('controller connected');
+			
+			console.log('Paired up: game ' + gameid + ' / controller ' + socket.id);
+			
+			returnConnection(true);
 		} else {
-			socket.emit('no game');
+			returnConnection(false);
 		}
+		
 	});
 	
+	/* 
+	 * Receiving controller updates
+	 */
 	socket.on('update', function(data) {
-		var id = map[socket.id];
-		io.sockets.socket(id).emit('update', data);
+		socket.get('game', function(err, gid){
+			if (!err) {
+				io.sockets.socket(gid).emit('update', data);
+			}
+		});
 	});
 	
+	/* 
+	 * Disconnects
+	 */
 	socket.on('disconnect', function(){
 		socket.get('type', function (err, type){
 			if (type == 'game') {
 				socket.get('stamp', function(err, stamp){
-					games[stamp] = null;
-					console.log('game connection '+socket.id+' closed.');
+					if (stamp) {
+						match[stamp] = null;
+					}
 				});
+				socket.get('controller', function(err, cid){
+					if (cid) {
+						io.sockets.socket(cid).emit('game closed');
+					}
+				});
+				console.log('game connection '+socket.id+' closed.');
 			} else if (type == 'controller') {
-				map[socket.id] = null;
+				socket.get('game', function(err, gid){
+					if (gid) {
+						io.sockets.socket(gid).emit('controller closed');
+					}
+				});
 				console.log('controller connection '+socket.id+' closed.')
 			}
 		});
 	});
 });
+
+function getNewStamp() {
+	var s = new Date().getTime();
+	return s%100000000;
+}
