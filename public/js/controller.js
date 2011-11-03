@@ -31,8 +31,8 @@ function start() {
 }
 
 function sendUpdate(data){
-	orientation.x = data.beta;
-	orientation.y = data.alpha;
-	orientation.z = -data.gamma;
+	orientation.x = data.beta.toFixed(3);
+	orientation.y = data.alpha ? data.alpha.toFixed(3) : 0;
+	orientation.z = -data.gamma.toFixed(3);
 	socket.emit('update', orientation);
 }

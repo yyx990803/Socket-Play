@@ -68,21 +68,20 @@ require(
 		};
 		
 		var count = 0;
-		var i = document.getElementById('ups');
 		watch();
 		function watch() {
-			i.innerHTML = count;
+			$('#ups').text(count);
 			count = 0;
 			setTimeout(watch, 1000);
 		}
 		
 		function update(x,y,z) {
-			y = 0;
 			new TWEEN.Tween( cube.rotation ).to({
 				x : x / RATIO,
 				y : y / RATIO,
 				z : z / RATIO
-			}, 200).start();	
+			}, 200).start();
+			$('#info').html('alpha (y rotation): '+y+'<br/>beta (x rotation): '+x+'<br/>gamma (z rotation): '+z);
 		}
 
     }
