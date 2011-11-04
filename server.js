@@ -90,6 +90,45 @@ io.sockets.on('connection', function (socket) {
 	});
 	
 	/* 
+	 * Receiving game state changes
+	 */
+	socket.on('pause', function(){
+		socket.get('type', function(err, type){
+			if (type == 'game') {
+				socket.get('controller', function(err, cid){
+					if (cid) {
+						io.sockets.socket(cid).emit('game paused');
+					}
+				});
+			} else {
+				socket.get('game', function(err, gid){
+					if (gid) {
+						io.sockets.socket(gid).emit('controller paused');
+					}
+				});
+			}
+		});
+	});
+	
+	socket.on('resume', function(){
+		socket.get('type', function(err, type){
+			if (type == 'game') {
+				socket.get('controller', function(err, cid){
+					if (cid) {
+						io.sockets.socket(cid).emit('game resumed');
+					}
+				});
+			} else {
+				socket.get('game', function(err, gid){
+					if (gid) {
+						io.sockets.socket(gid).emit('controller resumed');
+					}
+				});
+			}
+		});
+	});
+	
+	/* 
 	 * Disconnects
 	 */
 	socket.on('disconnect', function(){

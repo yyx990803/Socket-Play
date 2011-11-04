@@ -1,9 +1,45 @@
 <div id="content"></div>
+
 <div id="panel">
 	<h4>Game ID: <span id="gameid"></span></h4>
 	<div id="status">Controller not connected</div>
 	<div id="updates"></div>
+</div>
+
+<div id="score">0</div>
+
+<div id="menu">
+	<a id="about">About</a>
+	<a id="how">How to Play</a>
+	<!--<a id="highscore">High Scores</a>-->
+</div>
+
+<div class="popup" id="about-popup">
+	An experiment in progress by <a href="http://www.yuxiyou.net" target="_blank">Evan You</a> (@yuxiyou)
 	<br/>
-	<div id="info"></div>
+	Currently this is just a demo. I'm working to turn it into a real game.
+	<br/>
+	<a href="http://nodejs.org" target="_blank">Node.js</a> +
+	<a href="http://socket.io" target="_blank">Socket.io</a> +
+	<a href="https://github.com/mrdoob/three.js/" target="_blank">Three.js</a>
+	<br/><br/>
+	<a class="resume">[OK]</a>
+</div>
+
+<div class="popup" id="how-popup">
+	<ol>
+		<li>Browser requirement: latest versions of Chrome or Firefox</li>
+		<li>Device requirement: iPhone with iOS 4.2+</li>
+		<li>Make sure your iPhone is connected to WiFi, otherwise it won't work</li>
+		<li>Open Mobile Safari and go to <span style="color: #33BBC8">http://s.magnetic.io:8888/c</span> (Don't forget the port!)</li>
+		<li>Enter the game ID shown in the upper left corner</li>
+		<li>Enjoy</li>
+	</ol>
+	<br/>
+	<div style="text-align: center">
+		<a class="resume">[Play]</a>
+		<br/>
+		<a>[Video Coming Soon]</a>
+	</div>
 </div>
 <script data-main="js/main" src="js/require.js"></script>

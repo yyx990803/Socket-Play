@@ -10,10 +10,8 @@ require(
 		//useStats();
 		useAnimation();
 		
-		var RATIO = 360/Math.PI,
-			updateCount = 0,
+		var updateCount = 0,
 			DEBUG = false;
-			
 		if (DEBUG) {
 			checkUpdateRate();
 			$('#updates').html('<span id="ups"></span> Updates/Sec');
@@ -29,7 +27,10 @@ require(
 			y: 0,
 			z: 0
 		};
-		
+	    var RATIO = 360/Math.PI;
+		var socket,
+			connected = false,
+			paused = false;
 		var camera, scene, renderer;
 		var player, Ship;
 		var Particles = [];
@@ -38,6 +39,7 @@ require(
 		initGameLogic();
 		animate();
 		initSocket();
+		handleEvents();
 
 		function init3D() {
 
@@ -71,7 +73,7 @@ require(
 		
 		function initSocket() {
 			
-		    var socket = io.connect();
+		    socket = io.connect();
 			
 		    socket.on('new connection', function() {
 		    	socket.emit('new game', function(id){
@@ -80,11 +82,13 @@ require(
 		    });
 		
 			socket.on('controller connected', function(){
-				$('#status').html('Controller Connected');
+				$('#status').html('Controller Connected').css('color','#3f3');
+				connected = true;
 			});
 			
 			socket.on('controller closed', function(){
-				$('#status').html('Controller Disconnected');
+				$('#status').html('Controller Disconnected').css('color','#f33');
+				connected = false;
 			});
 			
 		    socket.on('update', function(data){
@@ -97,28 +101,36 @@ require(
 		function update(x,y,z) {
 			ori.x = x / RATIO;
 			ori.z = z / RATIO;
-			player.vel.x = -z * .7;
-			player.vel.y = x * .7;
-			player.update();
+			player.vel.x = -z * .5;
+			player.vel.y = x * .5;
 		}
 		
 		function render() {
 			
-			Ship.rotation.x += (ori.x - Ship.rotation.x) * .05;
-			Ship.rotation.z += (ori.z*0.8 - Ship.rotation.z) * .05;
-			Ship.rotation.y = Ship.rotation.z * .8;
+			if (connected && !paused) {
+				
+				player.update();
 			
-			Ship.position.x += (player.pos.x - Ship.position.x) * .05;
-			Ship.position.y += (player.pos.y - Ship.position.y) * .05;
+				Ship.rotation.x += (ori.x - Ship.rotation.x) * .05;
+				Ship.rotation.z += (ori.z*0.8 - Ship.rotation.z) * .05;
+				Ship.rotation.y = Ship.rotation.z * .8;
+			
+				Ship.position.x += (player.pos.x - Ship.position.x) * .05;
+				Ship.position.y += (player.pos.y - Ship.position.y) * .05;
+				
+			} else {
+				
+				//show pause
+				
+			}
 			
 			for (var i=0; i<3; i++) {
 				var p = Particles[i];
 				p.position.z += 3;
 				if (p.position.z > 2000) p.position.z = -1000;
 			}
-			
+		
 			renderer.render( scene, camera );
-
 		}
 		
 		function addShip() {
@@ -166,6 +178,34 @@ require(
 				scene.add(p);
 			}
 
+		}
+		
+		function handleEvents() {
+			$('#about').click(function(){
+				if ($('#about-popup').data('open')!='true') {
+					paused = true;
+					socket.emit('pause');
+					$('.popup:visible').data('open','false').fadeOut();
+					$('#about-popup').data('open','true').fadeIn();
+				}
+			});
+			$('#how').click(function(){
+				if ($('#how-popup').data('open')!='true') {
+					paused = true;
+					socket.emit('pause');
+					$('.popup:visible').data('open','false').fadeOut();
+					$('#how-popup').data('open','true').fadeIn();
+				}
+			});
+			$('.resume').click(function(){
+				var p = $(this.parentNode);
+				if (!p.is('.popup')) p = $(this.parentNode.parentNode);
+				p.fadeOut(function(){
+					p.data('open','false');
+					paused = false;
+					socket.emit('resume');
+				});
+			});
 		}
 
     }

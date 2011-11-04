@@ -1,5 +1,6 @@
 var socket = io.connect(),
-	connected = false;
+	connected = false,
+	paused = false;
 
 socket.on('new connection', function(){
 	askForID();
@@ -8,6 +9,14 @@ socket.on('new connection', function(){
 socket.on('game closed', function(){
 	$('#status').html('Game Closed.');
 	connected = false;
+});
+
+socket.on('game paused', function(){
+	paused = true;
+});
+
+socket.on('game resumed', function(){
+	paused = false;
 });
 
 function askForID() {
@@ -27,7 +36,7 @@ function start() {
 	connected = true;
 	$('#status').html('Connected');
 	window.addEventListener('deviceorientation', function(data){
-		if (connected) {
+		if (connected && !paused) {
 			socket.emit('update', {
 				//x and z axis are swapped here becaues the device is held in landscape orientation
 				x: -data.gamma.toFixed(3),
