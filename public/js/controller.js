@@ -44,12 +44,21 @@ $(function(){
 		$('#connect').hide();
 		window.addEventListener('deviceorientation', function(data){
 			if (connected && !paused) {
-				socket.emit('update', {
-					//x and z axis are swapped here becaues the device is held in landscape orientation
-					x: -data.gamma.toFixed(3),
-					//y: data.alpha,
-					z: -data.beta.toFixed(3)
-				});
+				var data;
+				if ('ontouchstart' in window) {
+					data = {
+						//x and z axis are swapped here becaues the device is held in landscape orientation
+						x: -data.gamma.toFixed(3),
+						//y: data.alpha,
+						z: -data.beta.toFixed(3)
+					}
+				} else {
+					data = {
+						x: data.beta.toFixed(3),
+						z: -data.gamma.toFixed(3)
+					}
+				}
+				socket.emit('update', data);
 				//$('#info').html(data.beta+'<br/>'+data.alpha+'<br/>'+data.gamma);
 			}
 		}, false);
