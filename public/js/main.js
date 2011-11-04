@@ -3,47 +3,73 @@ require(
         "utils/stats",
 		"utils/anim",
 		"libs/three",
-		"libs/tween"
+		"classes/Player"
     ],
-    function(setupStats, setupAnimation, THREE, TWEEN) {
+    function(useStats, useAnimation, THREE, Player) {
 	
-		setupStats();
-		setupAnimation();
+		//useStats();
+		useAnimation();
 		
-		var WIDTH = 400,
-			HEIGHT = 300,
-			VIEW_ANGLE = 45,
-			ASPECT = WIDTH / HEIGHT,
-			NEAR = 0.1,
-			FAR = 10000,
-			RATIO = 180/Math.PI;
+		var RATIO = 360/Math.PI,
+			updateCount = 0,
+			DEBUG = false;
 			
-		var	container = document.getElementById('content'),
-			renderer = new THREE.WebGLRenderer(),
-			camera = new THREE.Camera(VIEW_ANGLE,ASPECT,NEAR,FAR),
+		if (DEBUG) {
+			checkUpdateRate();
+			$('#updates').html('<span id="ups"></span> Updates/Sec');
+			function checkUpdateRate() {
+				$('#ups').text(updateCount);
+				updateCount = 0;
+				setTimeout(checkUpdateRate, 1000);
+			}
+		}
+		
+		var ori = {
+			x: 0,
+			y: 0,
+			z: 0
+		};
+		
+		var camera, scene, renderer;
+		var player, Ship;
+		var Particles = [];
+
+		init3D();
+		initGameLogic();
+		animate();
+		initSocket();
+
+		function init3D() {
+
+			container = document.getElementById('content');
+
+			camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
+			camera.position.z = 1000;
+
 			scene = new THREE.Scene();
-			
-		camera.position.z = 300;
-		renderer.setSize(WIDTH, HEIGHT);
-		container.appendChild(renderer.domElement);
+			scene.fog = new THREE.FogExp2( 0x000000, 0.001 );			
+			addShip();
+			addParticles();
+
+			renderer = new THREE.WebGLRenderer({ clearAlpha: 1 });
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.sortObjects = false;
+
+			container.appendChild( renderer.domElement );
+
+		}
 		
-		var material = new THREE.MeshLambertMaterial({color:0xCC0000});
-		var cube = new THREE.Mesh(new THREE.Cube(100, 100 ,100), material);
-		var pointLight = new THREE.PointLight( 0xFFFFFF );
-		pointLight.position.x = 10;
-		pointLight.position.y = 50;
-		pointLight.position.z = 130;
+		function initGameLogic() {
+			player = new Player();
+			player.setBounds(window.innerWidth*1.4, window.innerHeight*1.4);
+		}
 		
-		scene.addChild(cube);
-		scene.addLight(pointLight);
+		function animate() {
+			requestAnimationFrame( animate );
+			render();
+		}
 		
-		(function animate() {
-			TWEEN.update();
-			renderer.render(scene, camera);
-			requestAnimationFrame(animate);
-		}) ();
-		
-		window.onload = function() {
+		function initSocket() {
 			
 		    var socket = io.connect();
 			
@@ -62,26 +88,84 @@ require(
 			});
 			
 		    socket.on('update', function(data){
-				count++;
+				if (DEBUG) updateCount++;
 				update(data.x, data.y, data.z);
 		    });
+		
 		};
 		
-		var count = 0;
-		watch();
-		function watch() {
-			$('#ups').text(count);
-			count = 0;
-			setTimeout(watch, 1000);
+		function update(x,y,z) {
+			ori.x = x / RATIO;
+			ori.z = z / RATIO;
+			player.vel.x = -z * .7;
+			player.vel.y = x * .7;
+			player.update();
 		}
 		
-		function update(x,y,z) {
-			new TWEEN.Tween( cube.rotation ).to({
-				x : x / RATIO,
-				y : y / RATIO,
-				z : z / RATIO
-			}, 200).start();
-			$('#info').html('alpha (y rotation): '+y+'<br/>beta (x rotation): '+x+'<br/>gamma (z rotation): '+z);
+		function render() {
+			
+			Ship.rotation.x += (ori.x - Ship.rotation.x) * .05;
+			Ship.rotation.z += (ori.z*0.8 - Ship.rotation.z) * .05;
+			Ship.rotation.y = Ship.rotation.z * .8;
+			
+			Ship.position.x += (player.pos.x - Ship.position.x) * .05;
+			Ship.position.y += (player.pos.y - Ship.position.y) * .05;
+			
+			for (var i=0; i<3; i++) {
+				var p = Particles[i];
+				p.position.z += 3;
+				if (p.position.z > 2000) p.position.z = -1000;
+			}
+			
+			renderer.render( scene, camera );
+
+		}
+		
+		function addShip() {
+			var size = 60,
+				geometry = new THREE.CubeGeometry( 30, 30, 30 );
+				material = new THREE.MeshNormalMaterial();
+			Ship = new THREE.Object3D();
+			for ( var i = 0; i < 3; i ++ ) {
+				var mesh = new THREE.Mesh( geometry, material );
+				switch(i) {
+					case 0:
+						mesh.position.z = -size;
+						break;
+					case 1:
+						mesh.position.x = -size*Math.sin(Math.PI/3);
+						mesh.position.z = size*Math.cos(Math.PI/3);
+						break;
+					case 2:
+						mesh.position.x = size*Math.sin(Math.PI/3);
+						mesh.position.z = size*Math.cos(Math.PI/3);
+						break;
+					default:
+						break;
+				}
+				mesh.matrixAutoUpdate = false;
+				mesh.updateMatrix();
+				Ship.add( mesh );
+				scene.add( Ship );
+			}
+		}
+		
+		function addParticles() {
+			
+			var material = new THREE.ParticleBasicMaterial({size: 5});
+			
+			for (var j=0; j < 3; j++) {
+				var geometry = new THREE.Geometry();
+				for ( var i = 0; i < 400; i++ ) {
+					var vector = new THREE.Vector3( Math.random() * 3000 - 1500, Math.random() * 3000 - 1500, Math.random() * -1000 );
+					geometry.vertices.push( new THREE.Vertex( vector ) );
+				}
+				var p = new THREE.ParticleSystem( geometry, material );
+				p.position.z = -j*1000+1000;
+				Particles.push(p);
+				scene.add(p);
+			}
+
 		}
 
     }
