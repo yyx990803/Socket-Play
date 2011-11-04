@@ -1,2 +1,2 @@
 #! /bin/bash
-phd $0 socketPlay s.magnetic.io
+phd $0 socketPlay sp.magnetic.io
