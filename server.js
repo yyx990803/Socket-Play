@@ -30,6 +30,7 @@ app.get('/', controllers.index);
 app.get('/c', controllers.controller);
 
 io = io.listen(app);
+
 app.listen(8888);
 
 //Socket Server Logic
