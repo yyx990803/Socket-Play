@@ -84,6 +84,13 @@ require(
 			socket.on('controller connected', function(){
 				$('#status').html('Controller Connected').css('color','#3f3');
 				connected = true;
+				var p = $('#how-popup');
+				if (paused && p.data('open')=='true') {
+					p.fadeOut(function(){
+						p.data('open','false');
+						paused = false;
+					});
+				}
 			});
 			
 			socket.on('controller closed', function(){

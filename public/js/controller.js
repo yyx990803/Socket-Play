@@ -9,6 +9,7 @@ socket.on('new connection', function(){
 socket.on('game closed', function(){
 	$('#status').html('Game Closed.');
 	connected = false;
+	$('#connect').show();
 });
 
 socket.on('game paused', function(){
@@ -17,6 +18,10 @@ socket.on('game paused', function(){
 
 socket.on('game resumed', function(){
 	paused = false;
+});
+
+$('#connect').click(function(){
+	askForID();
 });
 
 function askForID() {
@@ -35,6 +40,7 @@ function askForID() {
 function start() {
 	connected = true;
 	$('#status').html('Connected');
+	$('#connect').hide();
 	window.addEventListener('deviceorientation', function(data){
 		if (connected && !paused) {
 			socket.emit('update', {
