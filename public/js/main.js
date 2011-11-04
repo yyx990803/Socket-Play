@@ -125,15 +125,11 @@ require(
 				Ship.position.x += (player.pos.x - Ship.position.x) * .05;
 				Ship.position.y += (player.pos.y - Ship.position.y) * .05;
 				
-			} else {
-				
-				//show pause
-				
 			}
 			
 			for (var i=0; i<3; i++) {
 				var p = Particles[i];
-				p.position.z += 3;
+				p.position.z += 8;
 				if (p.position.z > 2000) p.position.z = -1000;
 			}
 		
@@ -175,7 +171,7 @@ require(
 			
 			for (var j=0; j < 3; j++) {
 				var geometry = new THREE.Geometry();
-				for ( var i = 0; i < 400; i++ ) {
+				for ( var i = 0; i < 500; i++ ) {
 					var vector = new THREE.Vector3( Math.random() * 3000 - 1500, Math.random() * 3000 - 1500, Math.random() * -1000 );
 					geometry.vertices.push( new THREE.Vertex( vector ) );
 				}
