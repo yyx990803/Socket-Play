@@ -59,7 +59,7 @@ $(function(){
 					}
 				}
 				socket.emit('update', data);
-				//$('#info').html(data.beta+'<br/>'+data.alpha+'<br/>'+data.gamma);
+				////$('#info').html(data.beta+'<br/>'+data.alpha+'<br/>'+data.gamma);
 			}
 		}, false);
 	}
