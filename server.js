@@ -30,6 +30,16 @@ app.get('/', controllers.index);
 app.get('/c', controllers.controller);
 
 io = io.listen(app);
+io.configure('production', function(){
+  io.set('log level', 1);
+
+  io.set('transports', [
+	'xhr-polling',
+    'websocket',
+  	'htmlfile',
+  	'jsonp-polling'
+  ]);
+});
 
 app.listen(8888);
 
