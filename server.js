@@ -34,6 +34,7 @@ app.listen(8888);
 
 //Socket Server Logic
 var match = {}; //temp holder for establishing connections between games and controllers
+var activeGame = 0;
 
 io.sockets.on('connection', function (socket) {
 	
@@ -48,6 +49,7 @@ io.sockets.on('connection', function (socket) {
 		var stamp = getNewStamp();
 		returnID(stamp);
 		match[stamp] = socket.id;
+		activeGame ++;
 		socket.set('type', 'game');
 		socket.set('stamp', stamp);
 		
@@ -137,6 +139,8 @@ io.sockets.on('connection', function (socket) {
 				socket.get('stamp', function(err, stamp){
 					if (stamp) {
 						match[stamp] = null;
+						activeGame --;
+						if (activeGame == 0) match = {};
 					}
 				});
 				socket.get('controller', function(err, cid){
