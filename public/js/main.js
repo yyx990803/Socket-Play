@@ -106,6 +106,9 @@ require(
 		};
 		
 		function update(x,y,z) {
+			
+			x -= 15; //adjustment for holding habit
+			
 			ori.x = x / RATIO;
 			ori.z = z / RATIO;
 			player.vel.x = -z * .5;
