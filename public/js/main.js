@@ -196,7 +196,7 @@ require(
 					$('.popup:visible').data('open','false').fadeOut();
 					$('#how-popup').data('open','true').fadeIn();
 				}
-			});
+			}).trigger('click');
 			$('.resume').click(function(){
 				var p = $(this.parentNode);
 				if (!p.is('.popup')) p = $(this.parentNode.parentNode);
