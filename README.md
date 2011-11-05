@@ -13,7 +13,7 @@ Install
 --------
 
 	git clone git@github.com:yyx990803/Socket-Play.git
-	npm install
+	cd Socket-Play && npm install
 	node server.js
 	
 Navigate to http://localhost:8888
