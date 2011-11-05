@@ -11,14 +11,19 @@ Requirements
 
 Install
 --------
+
 	git clone git@github.com:yyx990803/Socket-Play.git
 	npm install
 	node server.js
+	
 Navigate to http://localhost:8888
+
 Use the iPhone's Mobile Safari to access the controller at http://localhost:8888/c
+
 If you are using a Macbook Pro 2010+, which supports the Device Orientation API, you can use a second tab to visit the controller.
 
 About
 --------
 Thanks to the awesome people behind Node.js, Express, Socket.io, Three.js
+
 Evan You (@yuxiyou)
