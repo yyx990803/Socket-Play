@@ -1,4 +1,0 @@
-nodejs_proxy=Y
-nodejs_port=8888
-engine=nodejs
-addons=(mongodb)
