@@ -1,3 +1,6 @@
+.highlight {
+  color: #00e6ff;
+}
 body {
   font-family: Monospace;
   background-color: #000000;
@@ -29,12 +32,16 @@ body {
   font-size: 30px;
   font-weight: bold;
 }
+h2 {
+  color: #00e6ff;
+  text-align: center;
+}
 h4 {
   margin: 0 0 5px;
   font-size: 15px;
 }
 a {
-  color: #33BBC8;
+  color: #00e6ff;
   cursor: pointer;
   text-decoration: none;
 }
@@ -57,7 +64,7 @@ a:hover {
   margin-top: -60px;
 }
 #how-popup {
-  margin-top: -250px;
+  margin-top: -270px;
   width: 360px;
   left: 50%;
   text-align: left;
