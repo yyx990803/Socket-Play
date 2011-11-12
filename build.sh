@@ -1,0 +1,1 @@
+r.js -o name=app-dev out=public/js/app.js baseUrl=public/js paths.requireLib=require include=requireLib
