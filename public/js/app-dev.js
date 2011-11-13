@@ -3,14 +3,19 @@ require(
 		"libs/three",
 		"classes/Player",
 		"utils/requestAnimationFrame",
-		"utils/stats",
+		//"utils/stats",
 		"https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"
     ],
-    function(THREE, Player, shivAnimation, Stats) {
+    function(
+		THREE
+	  , Player
+	  , shivAnimation
+	  //, Stats
+	) {
 		
 		$(function(){
 			
-			Stats.start();
+			//Stats.start();
 			shivAnimation();
 
 			var updateCount = 0,
