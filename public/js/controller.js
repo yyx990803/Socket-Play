@@ -1,4 +1,4 @@
-$(function(){
+$(document).ready( function () {
 	var socket = io.connect(),
 		connected = false,
 		paused = false;
@@ -21,7 +21,7 @@ $(function(){
 		paused = false;
 	});
 
-	$('#connect').click(function(){
+	$('#connect').tap(function(){
 		askForID();
 	});
 
